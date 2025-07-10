@@ -26,11 +26,11 @@ export default function ProductCard({ product }) {
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
       <div className="relative aspect-square">
        <Image
-  src={product.image_url || "/placeholder.svg?height=300&width=300"}
-  alt={product.name}
-  fill
-  className="object-cover"
-/>
+        src={product.image_url && product.image_url.trim() !== "" ? product.image_url : "/placeholder.svg"}
+        alt={product.name}
+        fill
+        className="object-cover"
+       />
         {product.stock < 10 && (
           <span className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded">Low Stock</span>
         )}

@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ["latin"] })
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={inter.className} suppressHydrationWarning={true}>
         <ClientProviders>
           <div className="min-h-screen flex flex-col">
             <Navbar />

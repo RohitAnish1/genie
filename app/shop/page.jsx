@@ -4,12 +4,14 @@ import { useState, useEffect } from "react"
 import { Search, Filter, ChevronDown } from "lucide-react"
 import ProductCard from "@/components/ProductCard"
 import { ProductCardSkeleton } from "@/components/SkeletonLoader"
-import { products, categories } from "@/data/products"
+import { supabase } from "@/lib/supabase"
 
 export default function ShopPage() {
+  const [allProducts, setAllProducts] = useState([])
   const [filteredProducts, setFilteredProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
+  const [categories, setCategories] = useState(["All"])
   const [selectedCategory, setSelectedCategory] = useState("All")
   const [priceRange, setPriceRange] = useState([0, 300])
   const [currentPage, setCurrentPage] = useState(1)
@@ -18,15 +20,33 @@ export default function ShopPage() {
   const productsPerPage = 12
 
   useEffect(() => {
-    // Simulate loading
-    setTimeout(() => {
-      setFilteredProducts(products)
+    async function fetchProducts() {
+      setLoading(true)
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+      if (error) {
+        setAllProducts([])
+        setFilteredProducts([])
+        setCategories(["All"])
+        setLoading(false)
+        return
+      }
+      setAllProducts(data || [])
+      setFilteredProducts(data || [])
+      // Extract unique categories from data
+      const uniqueCategories = [
+        "All",
+        ...Array.from(new Set((data || []).map((p) => p.category).filter(Boolean)))
+      ]
+      setCategories(uniqueCategories)
       setLoading(false)
-    }, 1000)
+    }
+    fetchProducts()
   }, [])
 
   useEffect(() => {
-    let filtered = products
+    let filtered = allProducts
 
     // Filter by search term
     if (searchTerm) {
@@ -43,7 +63,7 @@ export default function ShopPage() {
 
     setFilteredProducts(filtered)
     setCurrentPage(1)
-  }, [searchTerm, selectedCategory, priceRange])
+  }, [searchTerm, selectedCategory, priceRange, allProducts])
 
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage)
   const startIndex = (currentPage - 1) * productsPerPage

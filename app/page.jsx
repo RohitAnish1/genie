@@ -5,18 +5,30 @@ import Link from "next/link"
 import Image from "next/image"
 import ProductCard from "@/components/ProductCard"
 import { ProductCardSkeleton } from "@/components/SkeletonLoader"
-import { products } from "@/data/products"
+import { supabase } from "@/lib/supabase"
 
 export default function HomePage() {
   const [featuredProducts, setFeaturedProducts] = useState([])
+  const [allProducts, setAllProducts] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Simulate loading
-    setTimeout(() => {
-      setFeaturedProducts(products.slice(0, 4))
+    async function fetchProducts() {
+      setLoading(true)
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+      if (error) {
+        console.error("Error fetching products from Supabase:", error)
+        setFeaturedProducts([])
+        setAllProducts([])
+      } else {
+        setFeaturedProducts(data ? data.slice(0, 4) : [])
+        setAllProducts(data || [])
+      }
       setLoading(false)
-    }, 1000)
+    }
+    fetchProducts()
   }, [])
 
   return (
@@ -51,7 +63,15 @@ export default function HomePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {loading
               ? Array.from({ length: 4 }).map((_, i) => <ProductCardSkeleton key={i} />)
-              : featuredProducts.map((product) => <ProductCard key={product.id} product={product} />)}
+              : featuredProducts.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={{
+                      ...product,
+                      image: product.image_url 
+                    }}
+                  />
+                ))}
           </div>
 
           <div className="text-center mt-12">
@@ -113,6 +133,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      
     </div>
   )
 }
