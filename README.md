@@ -1,36 +1,217 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🛒 Shophub - Modern E-commerce Platform
 
-## Getting Started
+A full-featured, responsive e-commerce application built with **Next.js 15**, **React 19**, and **Supabase**. Features a modern UI with cart functionality, product filtering, and real-time database integration.
 
-First, run the development server:
+## ✨ Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### 🛍️ **Shopping Experience**
+- **Product Catalog** - Browse products with advanced filtering and search
+- **Product Details** - Comprehensive product pages with image galleries and specifications
+- **Shopping Cart** - Real-time cart management with quantity controls
+- **Responsive Design** - Optimized for mobile, tablet, and desktop
+
+### 🎨 **Modern UI/UX**
+- **Beautiful Interface** - Clean, modern design with Tailwind CSS
+- **Loading States** - Skeleton loaders for smooth user experience
+- **Interactive Elements** - Hover effects, animations, and intuitive navigation
+- **Accessibility** - ARIA labels and keyboard navigation support
+
+### ⚡ **Technical Features**
+- **Server-Side Rendering** - Fast page loads with Next.js App Router
+- **Real-time Database** - Supabase PostgreSQL with instant updates
+- **State Management** - React Context API with useReducer pattern
+- **Image Optimization** - Next.js Image component with Supabase storage
+- **TypeScript Ready** - Fully typed for better development experience
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js 18+ 
+- npm, yarn, pnpm, or bun
+- Supabase account (for database)
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd ecommerce-next
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   # or
+   yarn install
+   # or
+   pnpm install
+   ```
+
+3. **Environment Setup**
+   
+   Create a `.env.local` file in the root directory:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
+
+4. **Start the development server**
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   # or
+   pnpm dev
+   ```
+
+5. **Open your browser**
+   
+   Navigate to [http://localhost:3000](http://localhost:3000) to see the application.
+
+## 🗄️ Database Setup
+
+### Supabase Configuration
+
+1. **Create a new Supabase project** at [supabase.com](https://supabase.com)
+
+2. **Create the products table**
+   ```sql
+   CREATE TABLE products (
+     id BIGSERIAL PRIMARY KEY,
+     name TEXT NOT NULL,
+     description TEXT,
+     price DECIMAL(10,2) NOT NULL,
+     category TEXT,
+     image_url TEXT,
+     rating DECIMAL(2,1) DEFAULT 0,
+     stock INTEGER DEFAULT 0,
+     specifications JSONB,
+     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+   );
+   ```
+
+3. **Enable Row Level Security (RLS)**
+   ```sql
+   ALTER TABLE products ENABLE ROW LEVEL SECURITY;
+   
+   -- Allow public read access
+   CREATE POLICY "Allow public read access" ON products
+   FOR SELECT USING (true);
+   ```
+
+4. **Configure Storage** (for product images)
+   - Create a storage bucket named `product-images`
+   - Set bucket to public for image access
+
+## 📁 Project Structure
+
+```
+ecommerce-next/
+├── app/                    # Next.js App Router pages
+│   ├── cart/              # Shopping cart page
+│   ├── shop/              # Product catalog page
+│   ├── product/[pid]/     # Dynamic product detail pages
+│   ├── layout.js          # Root layout with navigation
+│   └── page.js            # Homepage
+├── components/            # Reusable React components
+│   ├── Navbar.jsx         # Navigation with cart badge
+│   ├── Footer.jsx         # Site footer
+│   ├── ProductCard.jsx    # Product display component
+│   ├── SkeletonLoader.jsx # Loading animations
+│   └── ClientProviders.jsx # Context providers wrapper
+├── contexts/              # React Context for state management
+│   └── CartContext.js     # Global cart functionality
+├── lib/                   # Utility libraries
+│   └── supabase.js        # Database client configuration
+└── public/               # Static assets
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🛠️ Technology Stack
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### **Frontend**
+- **[Next.js 15](https://nextjs.org/)** - React framework with App Router
+- **[React 19](https://react.dev/)** - UI library with latest features
+- **[Tailwind CSS](https://tailwindcss.com/)** - Utility-first CSS framework
+- **[Lucide React](https://lucide.dev/)** - Beautiful, customizable icons
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### **Backend & Database**
+- **[Supabase](https://supabase.com/)** - PostgreSQL database with real-time features
+- **[Supabase Storage](https://supabase.com/storage)** - File storage for product images
 
-## Learn More
+### **Development Tools**
+- **[ESLint](https://eslint.org/)** - Code linting and formatting
+- **[PostCSS](https://postcss.org/)** - CSS processing
 
-To learn more about Next.js, take a look at the following resources:
+## 🎯 Key Features Explained
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### **Cart Management**
+- Persistent cart state using localStorage
+- Real-time quantity updates
+- Automatic total calculations
+- Hydration-safe implementation
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### **Product Filtering**
+- Category-based filtering
+- Search functionality
+- Price range filtering
+- Real-time results
 
-## Deploy on Vercel
+### **Responsive Design**
+- Mobile-first approach
+- Flexible grid layouts
+- Touch-friendly interactions
+- Optimized for all screen sizes
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### **Performance**
+- Server-side rendering
+- Image optimization
+- Code splitting
+- Efficient database queries
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🚀 Deployment
+
+### **Vercel (Recommended)**
+
+1. **Connect your repository** to [Vercel](https://vercel.com)
+
+2. **Add environment variables** in Vercel dashboard:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
+3. **Deploy** - Automatic deployments on every push
+
+### **Other Platforms**
+- **Netlify** - Add build command: `npm run build`
+- **Railway** - Direct deployment from GitHub
+- **DigitalOcean App Platform** - Container-based deployment
+
+## 🔧 Development
+
+### **Available Scripts**
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run start        # Start production server
+npm run lint         # Run ESLint
+```
+
+### **Code Style**
+- Follow React best practices
+- Use TypeScript for type safety
+- Implement proper error boundaries
+- Write descriptive comments
+
+## 📝 License
+
+This project is open source and available under the [MIT License](LICENSE).
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📞 Support
+
+If you have any questions or need help, please:
+- Open an issue on GitHub
+- Check the [Next.js Documentation](https://nextjs.org/docs)
+- Review [Supabase Documentation](https://supabase.com/docs)
